@@ -1,1 +1,80 @@
-# Your Solution
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: book-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      imagePullSecrets:
+      - name: acr-auth
+      containers:
+      - name: book-catalog
+        image: sit722week78oshad.azurecr.io/book_catalog:1
+        ports:
+        - containerPort: 8000 
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://oshad_sit722_part3_user:VjmxlIGd4sH9YLPO5eJdhJqfMXjyKL0M@dpg-crj88ju8ii6s73fddctg-a.oregon-postgres.render.com/oshad_sit722_part3"
+          
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: book-catalog
+spec:
+  selector:
+    app: book-catalog
+  type: LoadBalancer 
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+
+
+---
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: inventory-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-management
+  template:
+    metadata:
+      labels:
+        app: inventory-management
+    spec:
+      imagePullSecrets:
+      - name: acr-auth
+      containers:
+      - name: inventory-management
+        image: sit722week78oshad.azurecr.io/inventory_management:1
+        ports:
+        - containerPort: 8000 
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://oshad_sit722_part3_user:VjmxlIGd4sH9YLPO5eJdhJqfMXjyKL0M@dpg-crj88ju8ii6s73fddctg-a.oregon-postgres.render.com/oshad_sit722_part3"
+          
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: inventory-management
+spec:
+  selector:
+    app: inventory-management
+  type: LoadBalancer 
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  
